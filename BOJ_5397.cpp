@@ -24,7 +24,7 @@ int main(){
             else if(c == '-'){
                 if(cursor != L.begin()){
                     cursor--;
-                    L.erase(cursor);
+                    cursor = L.erase(cursor);
                 }
             }
             else {
@@ -35,7 +35,7 @@ int main(){
         for(auto c : L){
             cout << c;
         }
-        cout << "\n" ;
+        cout << '\n' ;
     }
 }
                 

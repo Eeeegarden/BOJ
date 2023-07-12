@@ -31,7 +31,7 @@ int main(){
         for(int j=0; j<n; j++){
             if((vis[i][j]==0 && board[i][j]==1)) {
                 paint_count++;
-                // ±×¸²ÀÌ 1°³ÀÏ¶§ ¹Ý·ÊÃ³¸®
+                // ê·¸ë¦¼ì´ 1ê°œì¼ë•Œ ë°˜ë¡€ì²˜ë¦¬
                 if(max_size==0) max_size=1;
                 vis[i][j]==1;
                 Q.push({i,j});

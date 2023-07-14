@@ -82,6 +82,3 @@ int main(){
     if(ans==1005) cout << "IMPOSSIBLE" ;
     else cout << ans+1;
 }
-
-
-

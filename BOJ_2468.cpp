@@ -1,4 +1,4 @@
-//수정중
+//수정중2
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -30,7 +30,7 @@ int main(){
     for(int h=1; h<100; h++){
         int cnt=1;
         for(int k=0; k<n; k++){
-            fill(vis[k],vis[k]+102,0);
+            fill(vis[k],vis[k]+n,0);
         }
         Q.push({0,0});
         vis[0][0]=1;
@@ -42,7 +42,7 @@ int main(){
                             int nx = cur.X + dx[dir];
                             int ny = cur.Y + dy[dir];
                             if(nx<0 || ny<0 || nx>=n || ny>=n) continue;
-                            if(vis[nx][ny]>0 || hei[nx][ny]<=h) continue;
+                            if(vis[nx][ny]>0 || hei[nx][ny]>h) continue;
                             vis[nx][ny]=cnt;
                             Q.push({nx,ny});
                         }

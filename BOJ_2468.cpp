@@ -1,4 +1,4 @@
-//수정중4...
+//수정중5...
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -36,22 +36,24 @@ int main(){
         vis[0][0]=1;
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++){   
-                    while(!Q.empty()){
-                        auto cur = Q.front(); Q.pop();
-                        for(int dir=0; dir<4; dir++){
-                            int nx = cur.X + dx[dir];
-                            int ny = cur.Y + dy[dir];
-                            if(nx<0 || ny<0 || nx>=n || ny>=n) continue;
-                            if(vis[nx][ny]>0 || hei[nx][ny]>h) continue;
-                            vis[nx][ny]=cnt;
-                            Q.push({nx,ny});
-                        }
+                int area=0;
+                while(!Q.empty()){
+                    area++;
+                    auto cur = Q.front(); Q.pop();
+                    for(int dir=0; dir<4; dir++){
+                        int nx = cur.X + dx[dir];
+                        int ny = cur.Y + dy[dir];
+                        if(nx<0 || ny<0 || nx>=n || ny>=n) continue;
+                        if(vis[nx][ny]>0 || hei[nx][ny]>h) continue;
+                        vis[nx][ny]=cnt;
+                        Q.push({nx,ny});
                     }
-                    cnt++;
-                    if(cnt>=max_cnt)max_cnt=cnt;
-                    cout << max_cnt;
+                }
+                if(area!=0)cnt++;
             }
         }
+        if(cnt>=max_cnt)max_cnt=cnt;
+        cout << max_cnt << '\n';
     }
 
     // for(int i=0; i<n; i++){

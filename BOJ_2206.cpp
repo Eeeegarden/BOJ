@@ -1,77 +1,77 @@
-// 수정중...
+
+// 시간복잡도 때문에 고생한문제.. 
+// 벽 통과하면서 벽부순경우거리 안부순경우거리 두가지를 계산하면서 가야 O(2*NM)으로 해결가능
+// 벽을 부쉈을경우 BFS, 안부쉈을경우 BFS 따지면서 간다면 시간초과발생
+
+// 아래 Tips 참고함
+// 모든 칸을 전부 0으로 하나씩 바꾸어보고 BFS를 돌리는 것을 반복해서는 통과될 수 없습니다. 
+// 대부분의 알고리즘 문제가 그렇듯이, 풀이를 짜기 전에 반드시 해야 하는 것 중 하나는 시간 복잡도를 생각하는 것입니다. 
+// 시간 복잡도 계산, 전혀 어렵지 않습니다. 
+// 벽이 최대 O(NM)개 있는 맵에서, 벽을 하나 부술 때마다 O(NM)개의 칸을 탐색해야 하죠? 그러니 O((NM)^2)입니다. 
+// 이 수는 우리가 대충 1초에 돌 수 있다고 보는 단위인 1억을 10000배나 뛰어넘는 1조입니다. 절대 통과될 수 없을 것입니다.
 
 #include <bits/stdc++.h>
 using namespace std;
-#define X first
-#define Y second
 
-string board[1002];
-int vis[1002][1002];
-int vis2[1002][1002];
+char wall[1002][1002];
+int dis[2][1002][1002];
 int dx[4]={1,-1,0,0};
 int dy[4]={0,0,-1,1};
 int n,m;
-bool wall=0;
-queue<pair<int,int>> Q;
+queue<tuple<int,int,int>> Q;
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    cin >> n >> m ; // n=row m=col
+    cin >> n >> m;
+
     for(int i=0; i<n; i++){
-        fill(vis[i],vis[i]+m,-1);
-        cin >> board[i];
+        fill(dis[0][i],dis[0][i]+m,-1);
+        fill(dis[1][i],dis[1][i]+m,-1);
     }
-    Q.push({0,0});
-    vis[0][0]=1;
-    while(!Q.empty()){
-        auto cur = Q.front(); Q.pop();
-        for(int dir=0; dir<4; dir++){
-            int nx = cur.X + dx[dir];
-            int ny = cur.Y + dy[dir];
-            if(nx<0 || ny<0 || nx>n || ny>m) continue;
-            if(board[nx][ny]=='1'){
-                board[nx][ny]='0';
-                for(int i=0; i<n; i++){
-                    for(int j=0; j<m; j++){
-                        vis2[i][m]=vis[i][m];
-                    }
-                }
-                queue<pair<int,int>> Q2;
-                Q2.push({nx,ny});
-                vis2[nx][ny]=vis2[cur.X][cur.Y]+1;
-                while(!Q2.empty()){
-                    auto cur2 = Q2.front(); Q2.pop();
-                    for(int dir2=0; dir2<4; dir2++){
-                        int nx2 = cur2.X + dx[dir2];
-                        int ny2 = cur2.Y + dy[dir2];
-                        if(nx2<0 || ny2<0 || nx2>n || ny2>m) continue;
-                        if(vis2[nx2][ny2]>0 || board[nx2][ny2] == '1') continue;
-                        Q2.push({nx2,ny2});
-                        vis2[nx2][ny2]=vis2[cur2.X][cur2.Y]+1;
-                    }
-                }
-                board[nx][ny]='1';
-                if(vis[nx][ny]!=-1 && vis[nx][ny]>vis2[nx][ny])vis[nx][ny]=vis2[nx][ny];
-                // if(vis[n-1][m-1]==-1) vis[n-1][m-1]=vis2[n-1][m-1];
-                // else if(vis[n-1][m-1]!=-1 && vis2[n-1][m-1]<vis[n-1][m-1]) vis[n-1][m-1]=vis2[n-1][m-1];
-                // else continue;
-            }
-            if(vis[nx][ny]>0) continue;
-            Q.push({nx,ny});
-            vis[nx][ny]=vis[cur.X][cur.Y]+1;
-        }
-    }
-
-    cout << vis[n-1][m-1] << '\n' << '\n';
-
 
     for(int i=0; i<n; i++){
         for(int j=0; j<m; j++){
-            cout << vis2[i][j] << ' ' ;
+            cin >> wall[i][j];
+            if(wall[i][j]=='0'){
+                dis[0][i][j]=0;
+                dis[1][i][j]=0;
+            }
         }
-        cout << '\n';
     }
-            
+
+    Q.push({0,0,0});
+    dis[0][0][0]=1;
+
+    while(!Q.empty()){
+        auto cur = Q.front(); Q.pop();
+        for(int dir=0; dir<4; dir++){
+            int nz = get<0>(cur);
+            int nx = get<1>(cur) + dx[dir];
+            int ny = get<2>(cur) + dy[dir];
+            if(nx<0 || nx>=n || ny<0 || ny>=m) continue;
+            if(dis[nz][nx][ny]>0) continue;
+            if(nz=='1' && wall[nx][ny]=='1') continue;
+            if(wall[nx][ny]=='1' && nz==0){
+                dis[1][nx][ny]=dis[get<0>(cur)][get<1>(cur)][get<2>(cur)]+1;
+                Q.push({1,nx,ny});
+            }
+            else if(wall[nx][ny]=='0' && nz==0){
+                dis[0][nx][ny]=dis[get<0>(cur)][get<1>(cur)][get<2>(cur)]+1;
+                Q.push({0,nx,ny});
+            }
+            else if(wall[nx][ny]=='0' && nz==1){
+                dis[1][nx][ny]=dis[get<0>(cur)][get<1>(cur)][get<2>(cur)]+1;
+                Q.push({1,nx,ny});
+            }
+        }
+    }
+
+    if(dis[0][n-1][m-1]==0 && dis[1][n-1][m-1]==0) cout << "-1" ;
+    else {
+        if(dis[0][n-1][m-1]==0) cout << dis[1][n-1][m-1];
+        else if(dis[1][n-1][m-1]==0) cout << dis[0][n-1][m-1];
+        else cout << min(dis[0][n-1][m-1],dis[1][n-1][m-1]);
+    }
 }

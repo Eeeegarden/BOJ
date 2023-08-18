@@ -1,4 +1,4 @@
-// 푸는중..
+// 푸는중..2
 #include <bits/stdc++.h>
 using namespace std;
 

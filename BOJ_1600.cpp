@@ -1,4 +1,6 @@
-푸는중..
+// 벽 부수고 이동하기(BOJ_2206)와 비슷한 방식의 문제
+// 3차원 vis를 이용하여 BFS 진행하면서 계산을 해주었다.
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -7,13 +9,10 @@ using namespace std;
 
 int board[202][202];
 int vis[31][202][202];
-// 시계방향 -> 상하좌우 순서
 int dx[12]={1,2,2,1,-1,-2,-2,-1,1,-1,0,0};
 int dy[12]={-2,-1,1,2,2,1,-1,-2,0,0,-1,1};
-int k;
-int k_time=0;
-bool hor_mov =0;
-int w,h;
+int ans=100000;
+int k,w,h;
 queue<tuple<int,int,int>> Q;
 
 int main(){
@@ -23,12 +22,18 @@ int main(){
     cin >> k;
     cin >> w >> h;
 
-    for(int q=0; q<k; q++){
-        for(int i=0; i<h; i++){
-            for(int j=0; j<w; j++){
-                cin >> board[i][j];
-                if(board[i][j]==1)vis[q][i][j]=-1;
-                else vis[q][i][j]=0;
+    for(int i=0; i<h; i++){
+        for(int j=0; j<w; j++){
+            cin >> board[i][j];
+            if(board[i][j]==1){
+                for(int q=0; q<=k; q++){
+                    vis[q][i][j]=-1;
+                }
+            }
+            else {
+                for(int q=0; q<=k; q++){
+                    vis[q][i][j]=0;
+                }
             }
         }
     }
@@ -41,34 +46,36 @@ int main(){
             int nz = get<0>(cur);
             int nx = get<1>(cur) + dx[dir];
             int ny = get<2>(cur) + dy[dir];
-            if(nx<0 || ny<0 || nx>=h || ny>=w) continue;
-            if(board[nx][ny]==1 || vis[k_time][nx][ny]>0) continue;
-            if(k_time>=k && dir<8) continue;
+            if(nx<0 || ny<0 || nx>=h || ny>=w || nz<0 || nz>k) continue;
+            if(vis[nz][nx][ny]!=0 && vis[nz][nx][ny]<=vis[nz][get<1>(cur)][get<2>(cur)]+1) continue;
+            if(board[nx][ny]==1)continue;
+            // 말의 움직임을 할경우
             if(dir<8){
-                k_time++;
-                vis[nz+k_time][nx][ny]=vis[nz+k_time][get<1>(cur)][get<2>(cur)]+1;
-                Q.push({nz+k_time,nx,ny});
+                if(vis[nz+1][nx][ny]==0 || vis[nz+1][nx][ny]>vis[nz][get<1>(cur)][get<2>(cur)]+1){
+                    vis[nz+1][nx][ny]=vis[nz][get<1>(cur)][get<2>(cur)]+1;
+                    Q.push({nz+1,nx,ny});
+                }
             }
-            else if(dir>=8){
-                vis[nz][nx][ny]=vis[nz][get<1>(cur)][get<2>(cur)]+1;
-                Q.push({nz,nx,ny});
+            // 원숭이 움직임할경우
+            else {
+                if(vis[nz][nx][ny]==0 || vis[nz][nx][ny]>vis[nz][get<1>(cur)][get<2>(cur)]+1){
+                    vis[nz][nx][ny]=vis[nz][get<1>(cur)][get<2>(cur)]+1;
+                    Q.push({nz,nx,ny});
+                }
             }
         }
+    }    
+    
+    // 1개인경우 예외처리 
+    if((w==1 && h==1) && board[0][0]==0){
+        cout << "0" ;
+        return 0;
     }
-
-
-    cout << vis[0][h-1][w-1];
-
-    for(int i=0; i<h; i++){
-        for(int j=0; j<w; j++){
-            cout << vis[0][h-1][w-1] << ' ';
-        }
-        cout << '\n';
+    // 탈출하는 경우의 수 중 최솟값 찾기
+    for(int q=0; q<=k; q++){
+        if(vis[q][h-1][w-1]!=0)ans=min(ans,vis[q][h-1][w-1]);
     }
-
-
-    if(vis[k_time][h-1][w-1]==0)cout << "-1";
-    else cout << vis[k_time][h-1][w-1];
-
+    if(ans==100000) cout << "-1";
+    else cout << ans;
 
 }

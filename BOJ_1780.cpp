@@ -2,6 +2,9 @@
 // 재귀문제 접근시 1. 함수의 정의 <<- 함수형태와 넘겨주는 인자 잘 확인하기
 //                 2. base condition
 //                 3. 재귀 식
+
+// line43 : 범위를 i<n 으로해서 틀림 i<n+row 로 해야함
+// n이 작아져도 9칸 모두검사해야하기때문에
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -38,7 +41,6 @@ void count(int row,int col,int n){
     }
     else {
         if(checkbox(row,col,n)==false){
-            // 범위를 i<n 이 아닌 i<n+row 로 해야하는이유 : 
             for(int i=row; i<n+row; i=i+box){
                 for(int j=col; j<n+col; j=j+box){
                     if(checkbox(i,j,box)==false) count(i,j,box);

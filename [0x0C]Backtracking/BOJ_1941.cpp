@@ -1,12 +1,17 @@
-// 푸는중
+// 풀이방법 참조... 오래걸린문제
+// 모든 시작점 BFS -> 시간초과 , DFS -> 십자가 같은 모양 체크 어려움
+// 25C7로 후보군 선택 -> BFS로 후보군 이어져있는지 확인 -> 이다솜파 4명이상인지 체크, 카운트
+// 25C7 -> 대략 400000 ->  2초미만 실행가능
+
 #include <bits/stdc++.h>
 using namespace std;
 #define X first
 #define Y second
 
-string s[6];
+string m[5];
 int dx[4]={1,-1,0,0};
 int dy[4]={0,0,-1,1};
+vector<int> temp(25);
 int ans=0;
 
 int main(){
@@ -14,64 +19,50 @@ int main(){
     cin.tie(0);
 
     for(int i=0; i<5; i++){
-        cin >> s[i];
+        cin >> m[i];
     }
+    // prev_permutation 조합세팅 
+    fill(temp.begin(),temp.begin()+7,1);
 
-    for(int i=0; i<5; i++){
-        for(int j=0; j<5; j++){
-            queue<pair<int,int>> Q;
-            bool vis[6][6]={0,};
-            int curvis=0;
-            char curchar;
-            int cnt=0;
-            int ynum=0;
-            Q.push({i,j});
-            vis[i][j]=1;
-            if(s[i][j]=='Y')ynum++;
-            cnt++;
-            while(!Q.empty()){
-                auto cur = Q.front(); Q.pop();
-                if(vis[cur.X][cur.Y]!=0 && curvis>vis[cur.X][cur.Y]){
-                    if(curchar=='Y')ynum--;
-                    cnt--;
-                }
-                for(int dir=0; dir<4; dir++){
-                    int nx = cur.X + dx[dir];
-                    int ny = cur.Y + dy[dir];
-                    if(nx<0 || ny<0 || nx>=5 || ny>=5)continue;
-                    if(vis[nx][ny]!=0)continue;
-                    if(ynum==3 && s[nx][ny]=='Y')continue;
-                    Q.push({nx,ny});
-                    vis[nx][ny]=vis[cur.X][cur.Y]+1;
-                    curvis=vis[nx][ny];
-                    curchar=s[nx][ny];
+    do{
+        queue<pair<int,int>> Q;
+        bool vis[5][5]={0,};
+        bool pick[5][5]={0,};
+        int x,y;
+        int dasom=0;
+        int cnt=0;
+        // 골라진 부분 check표시, 첫 좌표 큐에 푸시
+        for(int i=0; i<25; i++){
+            x=i/5; y=i%5;
+            if(temp[i]==1){
+                pick[x][y]=true;
+                if(Q.empty()){
+                    Q.push({x,y});
+                    if(m[x][y]=='S')dasom++;
+                    vis[x][y]=1;
                     cnt++;
-                    if(s[nx][ny]=='Y')ynum++;
                 }
-                if(cnt==7 && ynum<=3){
-                    ans++;
-                    cout << "----------------" << '\n';
-                    cout << i << j <<'\n';
-                    for(int q=0; q<5; q++){
-                        for(int w=0; w<5; w++){
-                            cout << vis[q][w];
-                        }
-                        cout << '\n';
-                    }
-                    cout << "----------------" << '\n';
-                    break;
-                }
-                cout << "----------------" << '\n';
-                    cout << i << j <<' ' <<cnt <<'\n';
-                    for(int q=0; q<5; q++){
-                        for(int w=0; w<5; w++){
-                            cout << vis[q][w];
-                        }
-                        cout << '\n';
-                    }
-                    cout << "----------------" << '\n';
             }
         }
-    }
+        // 시작점 기준으로 bfs 돌려서 이어져있는지 확인
+        while(!Q.empty()){
+            auto cur = Q.front(); Q.pop();
+            for(int dir=0; dir<4; dir++){
+                int nx = cur.X + dx[dir];
+                int ny = cur.Y + dy[dir];
+                if(nx<0 || ny<0 || nx>=5  || ny>=5)continue;
+                if(vis[nx][ny]!=0)continue;
+                if(pick[nx][ny]!=1)continue;
+                Q.push({nx,ny});
+                if(m[nx][ny]=='S')dasom++;
+                vis[nx][ny]=1;
+                cnt++;
+            }
+        }
+        if(cnt==7 && dasom>=4){
+            ans++;
+        }
+    }while(prev_permutation(temp.begin(), temp.end()));
+
     cout << ans;
 }

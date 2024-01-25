@@ -17,6 +17,5 @@ int main() {
     }
 
     cin >> v;
-
     cout << arr[v+100];
 }

@@ -1,50 +1,48 @@
+// 백트래킹 풀이참조..
+// 백트래킹 시 함수형태 무조건 void로
 #include <bits/stdc++.h>
 using namespace std;
 
-int n;
-int s[302];
-int s2[302];
-int w[302];
-bool isused[302];
-int brk=0;
+int N;
+int s[10];
+int w[10];
 int ans=0;
+int cnt=0;
 
-void func(int k){
-    if(k==n){
-        for(int i=0; i<n; i++){
-            cout << s[i] << ' ';
-        }
-        cout << '\n';
-        if(brk>=ans)ans=brk;
+void solve(int n){
+    // 백트래킹 종료
+    if(n==N){
+        ans=max(cnt,ans);
         return;
     }
-    if(s[k]<=0)return;
-    for(int i=0; i<n; i++){
-        if(s[i]<=0 || k==i)continue;
-        s[k]-=w[i];
-        s[i]-=w[k];
-        if(s[k]<0)brk++;
-        if(s[i]<0)brk++;
-        func(k+1);
-        if(s[i]<0)brk--;
-        if(s[k]<0)brk--;
-        s[i]=s2[i];
-        s[k]=s2[k];
+    // 계란이 이미 깨져있거나 남은 계란 모두가 깨져있을때
+    if(s[n]<=0 || cnt==N-1){
+        solve(n+1);
+        return;
+    }
+    for(int dir=0; dir<N; dir++){
+        if(dir==n || s[dir]<=0)continue;
+        s[n]-=w[dir];
+        s[dir]-=w[n];
+        if(s[n]<=0)cnt++;
+        if(s[dir]<=0)cnt++;
+        solve(n+1);
+        if(s[n]<=0)cnt--;
+        if(s[dir]<=0)cnt--;
+        s[n]+=w[dir];
+        s[dir]+=w[n];
     }
 }
-        
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    cin >> n;
-
-    for(int i=0; i<n; i++){
+    cin >> N;
+    for(int i=0; i<N; i++){
         cin >> s[i] >> w[i];
-        s2[i]=s[i];
     }
-    func(0);
+    solve(0);
 
     cout << ans;
 }

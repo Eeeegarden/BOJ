@@ -1,17 +1,14 @@
-// 푸는중
+// 4H 30M 걸림 
 
-
-// 현재 로직 
+// 코드 로직
 /*
-입력->체크-> O -> 삽입
-             X -> 평이 -> O 
-                       -> X -> 90회전 -> O
-                                      -> X -> 180,270 ->
-                                                      -> X -> 건너뜀
+입력 -> 체크 -> O -> 삽입
+             -> X -> 평이 -> O 
+                          -> X -> 90회전 -> O
+                                         -> X -> 180,270 회전 -> O
+                                                              -> X -> 스티커 건너뜀
 
-시간복잡도 걸림
-예외처리 빡세게 해도 걸릴듯?
-
+시간복잡도 걸릴줄 알았는데 안걸림
 */
 
 #include <bits/stdc++.h>
@@ -22,7 +19,10 @@ using namespace std;
 int m[50][50]={0,}; // 노트북
 int N,M,K;
 int flag=0;
+int ans=0;
 
+// 평행이동된 스티커와 노트북 비교 함수
+// 스티커 모양대로 노트북에 자리있으면 노트북갱신,flag=1 저장
 void check_s(int x,int y,int hei,int len,int s[50][50],int s_num){
     int m2[50][50];
     int cnt=0;
@@ -37,12 +37,6 @@ void check_s(int x,int y,int hei,int len,int s[50][50],int s_num){
             }
             if(cnt==s_num){
                 copy(m2[0],m2[0]+2500,m[0]);
-                for(int q=0; q<N; q++){
-                    for(int w=0; w<M; w++){
-                        cout << m[q][w] << ' ';
-                    }
-                    cout << '\n';
-                }
                 flag=1;
                 return;
             }
@@ -51,6 +45,7 @@ void check_s(int x,int y,int hei,int len,int s[50][50],int s_num){
     return;
 }
 
+// 스티커 평행이동 시키면서 노트북 탐색
 void quest(int h,int l,int s[50][50],int s_num){
     for(int j=0; j<N; j++){
         for(int q=0; q<M; q++){
@@ -59,34 +54,27 @@ void quest(int h,int l,int s[50][50],int s_num){
             if(flag==1)return;
         }
     }
-    flag=0;
     return;
 }
 
+// 시계방향 90도 회전함수
 void rotate_s(int h,int l,int s[50][50],int s_num){
     int tmp_arr[50][50]={0,};
     for(int i=0; i<l; i++){
         for(int j=0; j<h; j++){
-            // 90도 회전.
             tmp_arr[i][j]=s[h-1-j][i];
-            
         }
     }
     copy(tmp_arr[0],tmp_arr[0]+2500,s[0]);
     return;
-    // for(int i=0; i<N; i++){
-    //     for(int j=0; j<M; j++){
-    //         cout << s[i][j] << ' ';
-    //     }
-    //     cout << '\n';
-    // }
-
 }
 
-// 안들어간다면 회전시키기 flag로 quest가 실행됐는지 파악가능
+// 삽입
 void insert_s(int h,int l,int s[50][50],int s_num){
-    flag=0;
-    quest(h,l,s,s_num);
+    flag=0; // 삽입됐는지 체크변수
+    quest(h,l,s,s_num); // 노트북 탐색함수
+
+    // 노트북 탐색했는데 안들어갈때 90도 회전시키고 다시탐색
     if(flag==0){
         for(int num=0; num<4 && flag==0; num++){
             int tmp;
@@ -110,8 +98,8 @@ int main(){
     
     for(int i=0; i<K; i++){
         int hei,len;
-        int s_num=0;
-        int s[50][50]={0,}; // 스티커
+        int s_num=0; // 스티커 크기
+        int s[50][50]={0,}; // 스티커 종이
         cin >> hei >> len;
         for(int j=0; j<hei; j++){
             for(int q=0; q<len; q++){
@@ -119,7 +107,13 @@ int main(){
                 if(s[j][q]==1)s_num++;
             }
         }
-        cout << "---try:" << i << "-------" << '\n';
         insert_s(hei,len,s,s_num);
     }
+
+    for(int i=0; i<N; i++){
+        for(int j=0; j<M; j++){
+            if(m[i][j]==1)ans++;
+        }
+    }
+    cout << ans;
 }

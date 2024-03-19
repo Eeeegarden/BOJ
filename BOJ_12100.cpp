@@ -1,67 +1,168 @@
-// 푸는중
-// 생각보다 어려운듯
-
+// 반례 찾는중..
 
 #include <bits/stdc++.h>
 using namespace std;
 
 int N;
-int m[22][22];
-int m2[22][22];
-int dx[4]={1,-1,0,0};
-int dy[4]={0,0,-1,1};
+int board[22][22];
 int ans=0;
-int cnt=0;
 
 
-void mv(int m2[22][22],int cnt){
-    if(cnt>=5){
-        for(int i=0; i<N; i++){
-            for(int j=0; j<N; j++){
-                if(ans<=m2[i][j])ans=m2[i][j];
-            }
+void prt(){
+    for(int i=0; i<N; i++){
+        for(int j=0; j<N; j++){
+            cout << board[i][j] << ' ';
         }
-        return;
+        cout << '\n';
     }
-    // 백트래킹 완료되면 합쳐져있는 블록은 해체, cnt감소
-    // 블록이 존재하는 위치가 아니면 한칸씩 내림
-    for(int dir=0; dir<4; dir++){
-        // 상
-        if(dir==0){
-            int isused[22][22]={0,};
-            for(int y=0; y<N; y++){
-                for(int x=0; x<N; x++){
-                    int nx=x;
-                    if(x<0 || y<0 || x>=N || y>=N) continue;
-                    // 빈칸이면 한칸씩 위로 밈
-                    if(m2[x][y]==0){
-                        int s=0;
-                        while(s<N){
-                            m2[nx][y]=m2[nx+1][y];
-                            s++;
+}
+
+// 윗방향
+void nmv(int board2[][22]){
+    bool comb[22][22]={0,};
+    for(int j=0; j<N; j++){
+        for(int i=1; i<N; i++){
+            if(board2[i][j]!=0){
+                for(int ci=i; ci>0; ci--){
+                    // 블록에 숫자가 있을때
+                    if(board2[ci-1][j]!=0){
+                        // 블록 숫자가 같고 합쳐진 블록이 아니라면 합침
+                        if(board2[ci-1][j]==board2[ci][j] && comb[ci-1][j]==0){
+                            board2[ci-1][j]*=2;
+                            board2[ci][j]=0;
+                            comb[ci-1][j]=true;
+                            if(board2[ci-1][j]>=ans)ans=board2[ci-1][j];
                         }
-                    }                    
-                    // 합쳐지지 않은 같은수가 연속적으로 존재하면 합체
-                    if(m2[x+1][y]==m2[x][y] && !isused[x][y] && x>0 && m2[x][y]!=0){
-                        m2[x][y]*=2;
-                        m2[x+1][y]=0;
-                        isused[x][y]=1;
+                    }
+                    // 블록에 숫자가 없으면 방향으로 이동
+                    else {
+                        board2[ci-1][j]=board2[ci][j];
+                        board2[ci][j]=0;
+                        if(board2[ci-1][j]>=ans)ans=board2[ci-1][j];
                     }
                 }
             }
         }
-        cout << "----------------------" << '\n';
+    }
+}
+
+// 아래방향
+void smv(int board2[][22]){
+    bool comb[22][22]={0,};
+    for(int j=0; j<N; j++){
+        for(int i=N-1; i>0; i--){
+            if(board2[i][j]!=0){
+                for(int ci=i; ci<N-1; ci++){
+                    // 블록에 숫자가 있을때
+                    if(board2[ci+1][j]!=0){
+                        // 블록 숫자가 같고 합쳐진 블록이 아니라면 합침
+                        if(board2[ci+1][j]==board2[ci][j] && comb[ci+1][j]==0){
+                            board2[ci+1][j]*=2;
+                            board2[ci][j]=0;
+                            comb[ci+1][j]=true;
+                            if(board2[ci+1][j]>=ans)ans=board2[ci+1][j];
+                        }
+                    }
+                    // 블록에 숫자가 없으면 방향으로 이동
+                    else {
+                        board2[ci+1][j]=board2[ci][j];
+                        board2[ci][j]=0;
+                        if(board2[ci+1][j]>=ans)ans=board2[ci+1][j];
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 서쪽 방향
+void wmv(int board2[][22]){
+    bool comb[22][22]={0,};
+    for(int i=0; i<N; i++){
+        for(int j=1; j<N; j++){
+            if(board2[i][j]!=0){
+                for(int cj=j; cj>0; cj--){
+                    if(board2[i][cj-1]!=0){
+                        if(board2[i][cj-1]==board2[i][cj] && comb[i][cj-1]==0){
+                            board2[i][cj-1]*=2;
+                            board2[i][cj]=0;
+                            comb[i][cj-1]=true;
+                            if(board2[i][cj-1]>=ans)ans=board2[i][cj-1];
+                        }
+                    }
+                    else{
+                        board2[i][cj-1]=board2[i][cj];
+                        board2[i][cj]=0;
+                        if(board2[i][cj-1]>=ans)ans=board2[i][cj-1];
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 동쪽방향
+void emv(int board2[][22]){
+    bool comb[22][22]={0,};
+    for(int i=0; i<N; i++){
+        for(int j=N-1; j>=0; j--){
+            if(board2[i][j]!=0){
+                for(int cj=j; cj<N-1; cj++){
+                    if(board2[i][cj+1]!=0){
+                        if(board2[i][cj+1]==board2[i][cj] && comb[i][cj+1]==0){
+                            board2[i][cj+1]*=2;
+                            board2[i][cj]=0;
+                            comb[i][cj+1]=true;
+                            if(board2[i][cj+1]>=ans)ans=board2[i][cj+1];
+                        }
+                    }
+                    else{
+                        board2[i][cj+1]=board2[i][cj];
+                        board2[i][cj]=0;
+                        if(board2[i][cj+1]>=ans)ans=board2[i][cj+1];
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+void DFS(int cnt,int board2[][22]){
+    if(cnt==5){
         for(int i=0; i<N; i++){
             for(int j=0; j<N; j++){
-                cout << m2[i][j] << ' ';
+                cout << board2[i][j] << ' ';
+                if(board2[i][j]>=ans)ans=board2[i][j];
             }
             cout << '\n';
         }
-        cout << cnt << '\n';
-        cnt++;
-        mv(m2,cnt);
+        return;
+    }
+    int temp[22][22];
+    memcpy(temp, board2, sizeof(temp));
+    for(int i=0; i<4; i++){
+        switch(i){
+            case 0:
+                wmv(board2);
+                break;
+            case 1:
+                emv(board2);
+                break;
+            case 2:
+                nmv(board2);
+                break;
+            case 3:
+                smv(board2);
+                break;
+        }
+    DFS(cnt+1,board2);
+    memcpy(board2, temp, sizeof(temp));
     }
 }
+
+
+            
 
 int main(){
     ios::sync_with_stdio(0);
@@ -71,9 +172,13 @@ int main(){
 
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
-            cin >> m[i][j];
+            cin >> board[i][j];
         }
     }
-    mv(m,0);
+
+    DFS(0,board);
+
+
     cout << ans;
+
 }

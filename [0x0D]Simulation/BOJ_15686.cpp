@@ -27,9 +27,9 @@ int main(){
     }
     for(int i=0; i<house.size(); i++){
         for(int j=0; j<chicken.size(); j++){
-            int dis_X = (house[i].X - chicken[i].X>0) ? house[i].X - chicken[i].X : -(house[i].X - chicken[i].X);
-            int dis_Y = (house[i].Y - chicken[i].Y>0) ? house[i].Y - chicken[i].Y : -(house[i].Y - chicken[i].Y);
-            cout << i << j  << ' ' << dis_X << dis_Y << '\n';
+            int dis_X = (house[i].X - chicken[j].X>0) ? house[i].X - chicken[j].X : -(house[i].X - chicken[j].X);
+            int dis_Y = (house[i].Y - chicken[j].Y>0) ? house[i].Y - chicken[j].Y : -(house[i].Y - chicken[j].Y);
+            // cout << house[i].X << house[i].Y << '/' << chicken[j].X << chicken[j].Y  << ' ' << dis_X << dis_Y << '\n';
             if(dis[i]==0)dis[i]=dis_X+dis_Y;
             else dis[i]=min(dis_X+dis_Y,dis[i]);
         }
@@ -37,12 +37,12 @@ int main(){
 
     for(int i=0; i<house.size(); i++){
         ans += dis[i];
-        cout << dis[i] << ' ';
+        // cout << dis[i] << ' ';
     }
     
 
     
-    cout << '\n' << ans;
+    cout << ans;
 
 
 }

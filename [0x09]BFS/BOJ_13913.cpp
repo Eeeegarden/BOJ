@@ -1,10 +1,12 @@
-//푸는중
+// 간만에 BFS 감익히기
+// 반례 꼼꼼히 생각하기
 #include <bits/stdc++.h>
 using namespace std;
 
 int N,K;
 int dir[2]={-1,1};
 queue<int> Q;
+stack<int> S;
 
 int main(){
     ios::sync_with_stdio(0);
@@ -40,16 +42,14 @@ int main(){
         Q.push(nx);
     }
     cout << '\n';
-    for(int i=N-1; i<=K; i++){
-        cout << i << ' ';
-    }
-    cout << '\n';
-    for(int i=N-1; i<=K; i++){
-        cout << mv[i] << ' ';
-    }
     int i=K;
-    while(mv[i]!=0){
-        cout << mv[i] << ' ';
-        i=mv[mv[i]];
+    while(time[i]!=0){
+        S.push(i);
+        i=mv[i];
+    }
+    S.push(i);
+    while(!S.empty()){
+        cout << S.top() << ' ';
+        S.pop();
     }
 }

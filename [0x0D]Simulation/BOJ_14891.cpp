@@ -1,6 +1,9 @@
-// 푸는중 1H45M ~ing
+// 3H 20M
+// 처음 상태에서 모든 톱니바퀴 체크 후 한번에 돌리도록 풀었으면 조금 더 쉬웠을듯
 
 
+// 나는 입력받은 톱니바퀴 기준으로 오른쪽 다돌리고, 왼쪽 다돌리고, 선택된 톱니바퀴 돌리도록
+// 이렇게 푸니까 생각할게 많았던 문제.. (1번톱니바퀴 돌릴때 2,3,4가 다돌아가는 경우)
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -20,38 +23,30 @@ int main(){
 
     cin >> K;
 
-    // 12시부터
-    // 1번째 기어 = index:2 톱니
-    // 2번째 기어 = 6,2 톱니
-    // 3 ..
-    // 4번째 기어 = 6 톱니
-    // N극 0, S극 1
-    // 시계방향 1, 반시계방향 -1
-
     for(int i=0; i<K; i++){
         cin >> t_gearnum >> t_dir;
+        // gearnum, dir = 계산을 위한 변수
         int gearnum=t_gearnum-1;
-        int dir = t_dir;
+        int dir=t_dir;
+        char b_gear;
         bool iswork=true;
-        // 지금은 1번만 하고 멈춤 끝까지 도는경우 체크해야함
-        // 1번돌았을때 2,3,4 다도는 경우
-        // 오른쪽 톱니바퀴
-        // 왼쪽톱니바퀴가 시계로돌면 오른쪽톱니바퀴는 반시계로돈다...
-        // 이거 체크안했네;
-        // 다 체크완료인데 1%에서 틀림
+        
+        // 오른쪽 톱니바퀴 돌아가는경우
+        if(gearnum<3)b_gear=gear[gearnum][2];
         while(iswork){
             iswork=false;
-            if(gearnum<3 && (gear[gearnum][2]!=gear[gearnum+1][6])){
+            if(gearnum<3 && (b_gear!=gear[gearnum+1][6])){
                 iswork=true;
+                b_gear=gear[gearnum+1][2];
                 if(dir==-1){
-                    int tmp=gear[gearnum+1][7];
+                    char tmp=gear[gearnum+1][7];
                     for(int i=7; i>=1; i--){
                         gear[gearnum+1][i]=gear[gearnum+1][i-1];
                     }
                     gear[gearnum+1][0]=tmp;
                 }
                 else{
-                    int tmp=gear[gearnum+1][0];
+                    char tmp=gear[gearnum+1][0];
                     for(int i=0; i<7; i++){
                         gear[gearnum+1][i]=gear[gearnum+1][i+1];
                     }
@@ -61,23 +56,25 @@ int main(){
             dir*=-1;
             }
         }
-        // 왼쪽 톱니바퀴
+        // 왼쪽 톱니바퀴 돌아가는경우
         iswork=true;
         gearnum=t_gearnum-1;
         dir=t_dir;
+        if(gearnum>0)b_gear=gear[gearnum][6];
         while(iswork){
             iswork=false;
-            if(gearnum>0 && (gear[gearnum][6]!=gear[gearnum-1][2])){
+            if(gearnum>0 && (b_gear!=gear[gearnum-1][2])){
                 iswork=true;
+                b_gear=gear[gearnum-1][6];
                 if(dir==-1){
-                    int tmp=gear[gearnum-1][7];
+                    char tmp=gear[gearnum-1][7];
                     for(int i=7; i>=1; i--){
                         gear[gearnum-1][i]=gear[gearnum-1][i-1];
                     }
                     gear[gearnum-1][0]=tmp;
                 }
                 else{
-                    int tmp=gear[gearnum-1][0];
+                    char tmp=gear[gearnum-1][0];
                     for(int i=0; i<7; i++){
                         gear[gearnum-1][i]=gear[gearnum-1][i+1];
                     }
@@ -87,26 +84,24 @@ int main(){
             dir*=-1;
             }
         }
+        
+        // 선택된 톱니바퀴 돌림
         dir=t_dir;
-        // 돌릴 톱니바퀴
+        gearnum=t_gearnum-1;
         if(dir==1){
-            int tmp=gear[gearnum][7];
+            char tmp=gear[gearnum][7];
             for(int i=7; i>=1; i--){
                 gear[gearnum][i]=gear[gearnum][i-1];
             }
             gear[gearnum][0]=tmp;
         }
         else{
-            int tmp=gear[gearnum][0];
+            char tmp=gear[gearnum][0];
             for(int i=0; i<7; i++){
                 gear[gearnum][i]=gear[gearnum][i+1];
             }
             gear[gearnum][7]=tmp;
         }
-        // cout << "-------------------" << '\n';
-        // for(int i=0; i<4; i++){
-        //     cout << gear[i] << '\n';
-        // }
     }
 
     for(int i=0; i<4; i++){

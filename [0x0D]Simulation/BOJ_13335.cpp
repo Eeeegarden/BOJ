@@ -1,11 +1,16 @@
-//푸는중
+// 2H 20M
+// 구현은 금방했는데
+// a값 범위설정 잘못해서(a[10]으로 설정해서 뻘짓함)
+
 #include <bits/stdc++.h>
 using namespace std;
 
 int n,w,L;
-int a[12]={0,};
+int a[1002]={0,};
 int dis[1002]={0,};
 int ans=0;
+int curi=0;
+queue<int> Q;
 
 int main(){
     ios::sync_with_stdio(0);
@@ -18,33 +23,30 @@ int main(){
     for(int i=0; i<n; i++){
         dis[i]+=w+i+1;
     }
-    // 다리 하중보다 트럭무게가 작으면서
-    // 마지막 트럭까지 다 지나갈때까지
-    
-    while(dis[n-1]!=0){
+
+    // 맨앞트럭 curi로 설정하면서 차례로 계산
+    while(curi<n){
         int curw=0;
-        for(int i=0; i<n; i++){
+        for(int i=curi; i<n; i++){
             if(dis[i]==0)continue;
-            if(curw+dis[i]>L)continue;
-            if(dis[i]>0 && dis[i]<w){
+            if(dis[i]<=w){
                 curw+=a[i];
                 dis[i]--;
-                if(dis[i]==0)curw-=a[i];
+                if(dis[i]==0){
+                    curi=i+1;
+                    curw-=a[i];
+                }
             }
-            // 다리 하중 0일때 트럭움직이는거 추가하기
+            else{
+                if(dis[i]-1==w){
+                    if(curw+a[i]>L)break;
+                    curw+=a[i];
+                    dis[i]--;
+                }
+                else dis[i]--;
+            }
         }
-        for(int i=0; i<n; i++){
-                cout << dis[i] << ' ';
-        }
-        cout << '\n';
         ans++;
     }
     cout << ans;
 }
-
-
-
-
-
-
-

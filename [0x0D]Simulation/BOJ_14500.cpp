@@ -1,4 +1,5 @@
 // 2H
+// https://www.acmicpc.net/problem/14500
 
 // 도형을 회전,좌우대칭 하는것 보다 board를 회전,대칭 해서 풀었음
 // 회전하는 문제 많음 -> 완벽하게 익히기
@@ -9,8 +10,6 @@ using namespace std;
 #define Y second
 
 int board[502][502];
-int dx[4]={1,-1,0,0};
-int dy[4]={0,0,-1,1};
 int N,M;
 int ans=0;
 

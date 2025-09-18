@@ -26,18 +26,13 @@ int main(){
             if(arr[i].X <= cur && arr[i].Y > nxt){
                 nxt = arr[i].Y;
             }
-            if(nxt == cur){
-                cout << 0;
-                return 0;
-            }
-            ans++;
-            cur = nxt;
         }
-        cout << ans;
+        if(nxt == cur){
+            cout << 0;
+            return 0;
+        }
+        ans++;
+        cur = nxt;
     }
-    
-
-
-
-
+    cout << ans;
 }
